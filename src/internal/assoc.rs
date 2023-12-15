@@ -15,6 +15,8 @@ mod tests {
         let x = X { y: 1 };
         let y = assoc!(X, y)(10);
         assert_eq!(y(x).y, 10);
+        let x = X { y: 1 };
+        assert_eq!(y(x).y, 10);
     }
 
     #[test]
