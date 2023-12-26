@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! assoc {
     ($T: ident, $($p: ident),*) => {
-        (move |p| Box::new( move |mut t: $T|{ t$(.$p)* = p; t}))
+        (move |p| Box::new(move |mut t: $T|{ t$(.$p)* = p; t}))
     };
 }
 
@@ -27,8 +27,9 @@ mod tests {
         struct X {
             y: Y,
         }
-        let x = X { y: Y { z: 1 } };
+        let mut x = X { y: Y { z: 1 } };
         let y = assoc!(X, y, z)(10);
-        assert_eq!(y(x).y.z, 10);
+        assert_eq!(({x = y(x); &x}).y.z, 10);
+        assert_eq!(({x = y(x); &x}).y.z, 10);
     }
 }

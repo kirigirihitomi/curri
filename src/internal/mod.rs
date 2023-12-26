@@ -10,7 +10,6 @@ pub mod curry;
 pub mod identity;
 pub mod if_else;
 pub mod map;
-pub mod partial;
-pub mod pipe;
+pub mod reduce;    
 
 pub use crate::*;

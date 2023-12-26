@@ -1,9 +1,11 @@
-pub fn cond<'a, T, R>(iter: &'a Vec<(Box<dyn Fn(T) -> bool>, Box<dyn Fn(T) -> R>)>) -> Box<dyn Fn(T) -> Option<R> + 'a>
+pub fn cond<'a, T, R, F, G>(iter: Vec<(F, G)>) -> Box<dyn Fn(T) -> Option<R> + 'a>
 where
-    T: Copy,
+    T: Copy + 'a,
+    F: Fn(T) -> bool + 'a,
+    G: Fn(T) -> R + 'a,
 {
     Box::new(move |value: T| {
-        for (predicate, transform) in iter {
+        for (predicate, transform) in &iter {
             if predicate(value) {
                 return Some(transform(value));
             }
@@ -18,12 +20,8 @@ mod tests {
 
     #[test]
     fn test_cond() {
-        let iter = vec![
-            ((|x| x > 0).curry(), (|x| (x * 2)).curry()),
-            ((|x| x < 0).curry(), (|x| (x * 3)).curry()),
-        ];
-
-        let cond_fn = cond(&iter);
+        let iter = vec![((|x| x > 0).curry(), (|x| (x * 2)).curry()), ((|x| x < 0).curry(), (|x| (x * 3)).curry())];
+        let cond_fn = cond(iter);
 
         assert_eq!(cond_fn(5), Some(10));
         assert_eq!(cond_fn(-5), Some(-15));

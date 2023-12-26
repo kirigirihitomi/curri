@@ -10,9 +10,9 @@ macro_rules! impl_apply {
         impl<'a, F, O> Apply<'a, (O,)> for F
           where  F: Fn() -> O + 'a,
         {
-            type Output = F;
+            type Output =Box<F>;
             fn applicative(self) -> Self::Output {
-                self
+                Box::new(self)
             }
         }
     };
