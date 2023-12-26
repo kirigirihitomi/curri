@@ -2,7 +2,7 @@ use bevy_utils::all_tuples;
 
 trait Apply<'a, O> {
     type Output;
-    fn app(self) -> Self::Output; // app is short for applicative
+    fn applicative(self) -> Self::Output; // app is short for applicative
 }
 
 macro_rules! impl_apply {
@@ -11,7 +11,7 @@ macro_rules! impl_apply {
           where  F: Fn() -> O + 'a,
         {
             type Output = F;
-            fn app(self) -> Self::Output {
+            fn applicative(self) -> Self::Output {
                 self
             }
         }
@@ -22,7 +22,7 @@ macro_rules! impl_apply {
             F: Fn($($P),*) -> O + 'a,
         {
             type Output = Box<dyn Fn(($($P),*,))->O + 'a>;
-            fn app(self) -> Self::Output {
+            fn applicative(self) -> Self::Output {
                 Box::new(move |($($p),*,):($($P),*,)| self($($p),*))
             }
         }
@@ -30,6 +30,13 @@ macro_rules! impl_apply {
 }
 
 all_tuples!(impl_apply, 0, 8, P, p_);
+
+#[macro_export]
+macro_rules! apply {
+    ($e: expr) => {
+        $e.applicative()
+    };
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -37,7 +44,7 @@ mod tests {
     #[test]
     fn test_apply_fn() {
         let add = || 3;
-        let add_fn = add.app();
+        let add_fn = add.applicative();
         assert_eq!(add_fn(), 3);
         assert_eq!(add_fn(), 3);
     }
@@ -45,8 +52,15 @@ mod tests {
     #[test]
     fn test_apply_closure() {
         let multiply = |a, b| a * b;
-        let multiply_fn = multiply.app();
+        let multiply_fn = multiply.applicative();
         assert_eq!(multiply_fn((3, 4)), 12);
         assert_eq!(multiply_fn((3, 4)), 12);
+    }
+
+    #[test]
+    fn test_apply_macro() {
+        let add = || 3;
+        let result = apply!(add);
+        assert_eq!(result(), 3);
     }
 }

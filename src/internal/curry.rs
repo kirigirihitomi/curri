@@ -34,6 +34,13 @@ macro_rules! impl_curry {
 
 all_tuples!(impl_curry, 0, 8, P, p_);
 
+#[macro_export]
+macro_rules! curry {
+    ($e: expr) => {
+        $e.curry()
+    };
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -60,5 +67,13 @@ mod tests {
         let curried_concat = concat.curry();
         let result = curried_concat("Hello")("World");
         assert_eq!(result, "HelloWorld");
+    }
+
+    #[test]
+    fn test_curry_macro() {
+        // Test case 4
+        let add = |a, b| a + b;
+        let result = curry!(add)(2)(3);
+        assert_eq!(result, 5);
     }
 }

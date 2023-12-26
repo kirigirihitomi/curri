@@ -1,24 +1,28 @@
-#[macro_export]
-macro_rules! all {
-    ( $check_list: ident) => {
-        (Box::new(|t| {
-            for f in &$check_list {
-                if !f(t) {
-                    return false;
-                }
-            }
-            true
-        }))
-    };
+pub fn all<'a, T>(check_list: Vec<Box<dyn Fn(T) -> bool>>) -> Box<dyn Fn(T) -> bool + 'a>
+where
+    T: 'a + Copy,
+{
+    Box::new(move |t: T| {
+        let mut result = true;
+        for check in check_list.iter() {
+            result = result && check(t);
+        }
+        result
+    })
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn test_all_macro() {
-        let check_list = vec![|x: i32| x > 0, |x: i32| x < 10];
-        let all = all!(check_list);
-        assert_eq!(all(5), true);
-        assert_eq!(all(15), false);
+    fn test_all() {
+        let check_list: Vec<Box<dyn Fn(&i32) -> bool>> = vec![Box::new(|&x| x > 0), Box::new(|&x| x % 2 == 0)];
+
+        let all_fn = all(check_list);
+
+        assert_eq!(all_fn(&4), true);
+        assert_eq!(all_fn(&-2), false);
+        assert_eq!(all_fn(&7), false);
     }
 }

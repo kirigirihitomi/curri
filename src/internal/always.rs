@@ -1,6 +1,6 @@
 pub fn always<'a, T>(t: T) -> Box<dyn Fn() -> T + 'a>
 where
-    T: Clone + 'a,
+    T: Copy + 'a,
 {
     Box::new(move || t.clone())
 }
