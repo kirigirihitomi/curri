@@ -1,14 +1,14 @@
 #[macro_export]
 macro_rules! impl_compose {
-    (($f: ident), $t:ident) => {$f($t)};
-    (($f: ident, $($fs: ident),*), $t:ident) => {
+    (($f: expr), $t:expr) => {$f($t)};
+    (($f: expr, $($fs: expr),*), $t:ident) => {
        $f(impl_compose!(($($fs),*), $t))
     };
 }
 
 #[macro_export]
 macro_rules! compose {
-    ($($f: ident),+) => {
+    ($($f: expr),+) => {
         |t| impl_compose!(($($f),*),t)
     };
 }
