@@ -1,4 +1,4 @@
-pub fn reduce<T, R, F>(f: F) -> Box<dyn Fn(R) -> Box<dyn Fn(Vec<T>) -> R>>
+pub fn reduce<'a, T, R, F>(f: F) -> Box<dyn Fn(R) -> Box<dyn Fn(Vec<T>) -> R>>
 where
     T: Copy,
     R: Copy + 'static,

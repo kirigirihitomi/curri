@@ -1,6 +1,7 @@
-pub fn identity<T>(x: T) -> T {
+pub fn identity<'a, T>(x: T) -> T {
     x
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
