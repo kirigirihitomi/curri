@@ -1,8 +1,8 @@
-pub fn cond<'a, T, R, F, G>(iter: Vec<(F, G)>) -> Box<dyn Fn(T) -> Option<R> + 'a>
+pub fn cond<T, R, F, G>(iter: Vec<(F, G)>) -> Box<dyn Fn(T) -> Option<R>>
 where
-    T: Copy + 'a,
-    F: Fn(T) -> bool + 'a,
-    G: Fn(T) -> R + 'a,
+    T: Copy,
+    F: Fn(T) -> bool + 'static,
+    G: Fn(T) -> R + 'static,
 {
     Box::new(move |value: T| {
         for (predicate, transform) in &iter {

@@ -13,3 +13,4 @@ pub mod map;
 pub mod reduce;    
 
 pub use crate::*;
+pub use curry::*;

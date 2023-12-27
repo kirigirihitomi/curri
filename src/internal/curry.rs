@@ -1,14 +1,14 @@
 use bevy_utils::all_tuples;
 
-pub trait Curry<'a, O> {
+pub trait Curry<O> {
     type Output;
     fn curry(self) -> Self::Output;
 }
 
 macro_rules! impl_box_fn_ident {
-    () => {Box<dyn Fn() -> O + 'a>};
-    ($P0:ident) => {Box<dyn Fn($P0) -> O + 'a>};
-    ($P0:ident, $($P:ident),*) =>{Box<dyn Fn($P0) -> impl_box_fn_ident!($($P),*) + 'a>};
+    () => {Box<dyn Fn() -> O>};
+    ($P0:ident) => {Box<dyn Fn($P0) -> O>};
+    ($P0:ident, $($P:ident),*) =>{Box<dyn Fn($P0) -> impl_box_fn_ident!($($P),*)>};
 }
 
 macro_rules! impl_box_fn {
@@ -19,10 +19,10 @@ macro_rules! impl_box_fn {
 
 macro_rules! impl_curry {
     ($(($P:ident, $p:ident)),*) => {
-        impl<'a, F, O, $($P),*> Curry<'a, (O, $($P),*)> for F
+        impl< F, O, $($P),*> Curry<(O, $($P),*)> for F
         where
-            F: Fn($($P),*) -> O + Copy + 'a,
-            $($P: Copy +'a ),*
+            F: Fn($($P),*) -> O + Copy + 'static,
+            $($P: Copy + 'static),*
         {
             type Output = impl_box_fn_ident!($($P),*);
             fn curry(self) -> Self::Output {

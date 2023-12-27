@@ -1,6 +1,6 @@
-pub fn always<'a, T>(t: T) -> Box<dyn Fn() -> T + 'a>
+pub fn always<T>(t: T) -> Box<dyn Fn() -> T>
 where
-    T: Clone + 'a,
+    T: Clone + 'static,
 {
     Box::new(move || t.clone())
 }

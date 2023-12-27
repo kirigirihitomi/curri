@@ -1,7 +1,7 @@
-pub fn all<'a, T, F>(check_list: Vec<F>) -> Box<dyn Fn(T) -> bool + 'a>
+pub fn all<T, F>(check_list: Vec<F>) -> Box<dyn Fn(T) -> bool>
 where
-    T: Copy + 'a,
-    F: Fn(T) -> bool + 'a,
+    T: Copy,
+    F: Fn(T) -> bool + 'static,
 {
     Box::new(move |t: T| {
         for check in &check_list {

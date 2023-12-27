@@ -1,7 +1,7 @@
-pub fn map<'a, T, R, F>(f: F) -> Box<dyn Fn(Vec<T>) -> Vec<R> + 'a>
+pub fn map<T, R, F>(f: F) -> Box<dyn Fn(Vec<T>) -> Vec<R>>
 where
-    T: Copy + 'a,
-    F: Fn(T) -> R + 'a,
+    T: Copy,
+    F: Fn(T) -> R + 'static,
 {
     Box::new(move |v| {
         let mut r = vec![];

@@ -1,6 +1,7 @@
-pub fn t() -> bool {
+pub fn t<T>(_: T) -> bool {
     true
 }
-pub fn f() -> bool {
+
+pub fn f<T>(_: T) -> bool {
     false
 }

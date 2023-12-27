@@ -1,8 +1,8 @@
-pub fn reduce<'a, T, R, F>(f: F) -> Box<dyn Fn(R) -> Box<dyn Fn(Vec<T>) -> R + 'a> + 'a>
+pub fn reduce<T, R, F>(f: F) -> Box<dyn Fn(R) -> Box<dyn Fn(Vec<T>) -> R>>
 where
-    T: Copy + 'a,
-    R: Copy + 'a,
-    F: Fn(R, T) -> R + Copy + 'a,
+    T: Copy,
+    R: Copy + 'static,
+    F: Fn(R, T) -> R + Copy + 'static,
 {
     Box::new(move |r| {
         Box::new(move |v| {
