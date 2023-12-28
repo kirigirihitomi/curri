@@ -4,7 +4,10 @@ where
     G: Fn(T) -> R + 'c,
     H: Fn(T) -> R + 'd,
 {
-    Box::new(move |t: T| if check(&t) { if_fn(t) } else { else_fn(t) })
+    Box::new(move |t: T| match check(&t) {
+        true => if_fn(t),
+        false => else_fn(t),
+    })
 }
 
 #[cfg(test)]

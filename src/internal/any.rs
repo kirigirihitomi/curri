@@ -1,16 +1,11 @@
+use crate::reduce;
+
 pub fn any<'a, T, F>(check_list: Vec<F>) -> Box<dyn Fn(T) -> bool + 'a>
 where
     T: Copy,
     F: Fn(T) -> bool + 'a,
 {
-    Box::new(move |t: T| {
-        for check in &check_list {
-            if check(t) {
-                return true;
-            }
-        }
-        false
-    })
+    Box::new(move |t: T| reduce(|acc: bool, check: &F| acc || check(t))(false, &check_list))
 }
 
 #[cfg(test)]

@@ -1,14 +1,14 @@
 use bevy_utils::all_tuples;
 
-trait Apply<O> {
+trait Apply<'a, O> {
     type Output;
     fn applicative(self) -> Self::Output; // app is short for applicative
 }
 
 macro_rules! impl_apply {
     () => {
-        impl<F, O> Apply<(O,)> for F
-          where  F: Fn() -> O + 'static,
+        impl<'a, F, O> Apply<'a, (O,)> for F
+          where  F: Fn() -> O + 'a,
         {
             type Output =Box<F>;
             fn applicative(self) -> Self::Output {
@@ -17,11 +17,11 @@ macro_rules! impl_apply {
         }
     };
     ($(($P:ident, $p:ident)),*) => {
-        impl<F, O, $($P),*> Apply<(O, $($P),*)> for F
+        impl<'a, F, O, $($P),*> Apply<'a, (O, $($P),*)> for F
         where
-            F: Fn($($P),*) -> O + 'static,
+            F: Fn($($P),*) -> O + 'a,
         {
-            type Output = Box<dyn Fn(($($P),*,))->O>;
+            type Output = Box<dyn Fn(($($P),*,))->O + 'a>;
             fn applicative(self) -> Self::Output {
                 Box::new(move |($($p),*,):($($P),*,)| self($($p),*))
             }
