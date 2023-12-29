@@ -1,5 +1,17 @@
 use crate::reduce;
 
+#[doc = r"[a -> b] -> ([a] -> [b])
+Returns a new list containing the results of applying the function to each element of the list.
+# Example
+```
+use curri::map;
+let input = vec![1, 2, 3];
+let expected = vec![2, 4, 6];
+let double = |&x: &i32| x * 2;
+let map_double = map(double);
+assert_eq!(map_double(&input), expected);
+```
+"]
 pub fn map<'a, T, R, F>(f: F) -> Box<dyn Fn(&Vec<T>) -> Vec<R> + 'a>
 where
     T: Copy,

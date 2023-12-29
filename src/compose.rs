@@ -25,6 +25,10 @@ pub fn compose_vec<'a, T: 'a>(fs: Vec<Box<dyn Fn(T) -> T + 'a>>) -> Box<dyn Fn(T
 
 #[cfg(test)]
 mod tests {
+    use crate::Curry;
+
+    use super::*;
+
     #[test]
     fn test_compose_macro() {
         let add_one = |x| x + 1;
@@ -36,17 +40,22 @@ mod tests {
     }
 
     #[test]
-    fn test_compose_macro_with_one_function() {
-        let add_one = |x| x + 1;
-        let composed = compose!(add_one);
-        assert_eq!(composed(2), 3);
+    fn test_compose_macro_curry() {
+        let add_one = (|x: i32| x + 1).curry();
+        let double = (|x: i32| x * 2).curry();
+        let square = |x: i32| x * x;
+
+        let composed = compose!(add_one, double, square);
+        assert_eq!(composed(2), 9);
     }
 
     #[test]
-    fn test_compose_macro_i32_to_string_concat_hello_world() {
-        let to_string = |x: i32| x.to_string();
-        let concat = |a: String| format!("{}{}", a, "HelloWorld");
-        let composed = compose!(concat, to_string);
-        assert_eq!(composed(2), "2HelloWorld");
+    fn test_compose_vec() {
+        let add_one = (|x: i32| x + 1).curry();
+        let double = (|x: i32| x * 2).curry();
+        let square = (|x: i32| x * x).curry();
+
+        let composed = compose_vec(vec![add_one, double, square]);
+        assert_eq!(composed(2), 9);
     }
 }

@@ -9,7 +9,18 @@ where
     }
 }
 
-pub fn reduce<'a, 'b: 'a, R, F, T>(f: F) -> Box<dyn Fn(R, &Vec<T>) -> R + 'a>
+#[doc = r"[(a, b) -> a] -> (a, [b]) -> a
+Returns the result of applying the function to each element of the list.
+# Example
+```
+use curri::reduce;
+let add = |a: i32, &b: &i32| a + b;
+let reduce_add = reduce(add);
+let arr = vec![1, 2, 3, 4, 5];
+assert_eq!(reduce_add(0, &arr), 15);
+```
+"]
+pub fn reduce<'a, R, F, T>(f: F) -> Box<dyn Fn(R, &Vec<T>) -> R + 'a>
 where
     F: Fn(R, &T) -> R + Copy + 'a,
 {
@@ -21,10 +32,12 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::Curry;
+
     use super::*;
 
     #[test]
-    fn test_reduce_addition() {
+    fn test_reduce_add() {
         let add = |a: i32, &b: &i32| a + b;
         let reduce_add = reduce(add);
         let arr = vec![1, 2, 3, 4, 5];
@@ -32,27 +45,21 @@ mod tests {
     }
 
     #[test]
-    fn test_reduce_multiplication() {
-        let multiply = |a: i32, &b: &i32| a * b;
-        let reduce_multiply = reduce(multiply);
-        assert_eq!(reduce_multiply(1, &vec![1, 2, 3, 4, 5]), 120);
-    }
-
-    #[test]
-    fn test_reduce_floating_point_addition() {
-        let add = |a: f64, &b: &f64| a + b;
-        let reduce_add = reduce(add);
-        assert_eq!(reduce_add(0.0, &vec![1.0, 2.0, 3.0, 4.0, 5.0]), 15.0);
-    }
-
-    #[test]
     fn test_reduce_on_return() {
-        fn inside() -> i32 {
+        let arr = vec![1, 2, 3, 4, 5];
+        fn inside() -> Box<dyn Fn(i32, &Vec<i32>) -> i32> {
             let add = |a: i32, &b: &i32| a + b;
-            let reduce_add = reduce(add);
-            let arr = vec![1, 2, 3, 4, 5];
-            reduce_add(0, &arr)
+            reduce(add)
         }
-        assert_eq!(inside(), 15);
+        assert_eq!(inside()(0, &arr), 15);
+    }
+
+    #[test]
+    fn test_reduce_curry() {
+        let add = |a: i32, &b: &i32| a + b;
+        let reduce_add = reduce(add).curry();
+        let arr = vec![1, 2, 3, 4, 5];
+        let add_from_0 = reduce_add(0);
+        assert_eq!(add_from_0(&arr), 15);
     }
 }

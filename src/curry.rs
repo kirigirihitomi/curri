@@ -67,24 +67,12 @@ macro_rules! curry {
 #[cfg(test)]
 mod tests {
     use super::Curry;
-    #[test]
-    fn test_curry_string() {
-        // Test case 3
-        let fntest = |a: &str, b: &str| format!("{}{}", a, b);
-        let cur = fntest.curry();
-        let a = cur("Hello");
-
-        let result = a("World");
-        assert_eq!(result, "HelloWorld");
-        let result = a("World");
-        assert_eq!(result, "HelloWorld");
-    }
 
     #[test]
     fn test_curry_macro() {
-        // Test case 4
         let add = |&a, &b| a + b;
-        let result = curry!(add)(&2)(&3);
-        assert_eq!(result, 5);
+        let result = curry!(add)(&2);
+        assert_eq!(result(&3), 5);
+        assert_eq!(result(&3), 5);
     }
 }

@@ -1,3 +1,11 @@
+#[doc = r"(*) -> *
+Returns the given value.
+# Example
+```
+use curri::identity;
+assert_eq!(identity(5), 5);
+```
+"]
 pub fn identity<T>(x: T) -> T {
     x
 }

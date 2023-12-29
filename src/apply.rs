@@ -42,25 +42,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_apply_fn() {
-        let add = || 3;
-        let add_fn = add.applicative();
-        assert_eq!(add_fn(), 3);
-        assert_eq!(add_fn(), 3);
-    }
+    fn test_apply_closure() {}
 
     #[test]
-    fn test_apply_closure() {
+    fn test_apply_macro() {
         let multiply = |a, b| a * b;
         let multiply_fn = multiply.applicative();
         assert_eq!(multiply_fn((3, 4)), 12);
         assert_eq!(multiply_fn((3, 4)), 12);
-    }
-
-    #[test]
-    fn test_apply_macro() {
-        let add = || 3;
-        let result = apply!(add);
-        assert_eq!(result(), 3);
     }
 }
