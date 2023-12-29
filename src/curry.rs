@@ -54,8 +54,7 @@ macro_rules! impl_curry {
     };
 }
 
-all_tuples!(impl_curry, 1, 8, P, p_);
-impl_curry!();
+all_tuples!(impl_curry, 0, 8, P, p_);
 
 #[macro_export]
 macro_rules! curry {
