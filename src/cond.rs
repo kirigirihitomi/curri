@@ -20,7 +20,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::internal::curry::Curry;
+    use crate::curry::Curry;
 
     #[test]
     fn test_cond() {
