@@ -13,6 +13,16 @@ macro_rules! compose {
     };
 }
 
+pub fn compose_vec<'a, T: 'a>(fs: Vec<Box<dyn Fn(T) -> T + 'a>>) -> Box<dyn Fn(T) -> T + 'a> {
+    let mut fs = fs;
+    let f = fs.pop().unwrap();
+    let mut composed = f;
+    for f in fs.into_iter().rev() {
+        composed = Box::new(move |t| f(composed(t)));
+    }
+    composed
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
